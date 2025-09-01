@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Skills</title>
+</head>
+<body>
+    <h1>Manage Skills</h1>
+
+    <!-- Add New Skill -->
+    <form action="/admin/skills/save" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="">
+        <input type="text" name="name" placeholder="Skill Name" required>
+        <input type="file" name="image_file">
+        <select name="status">
+            <option value="a">Active</option>
+            <option value="i">Inactive</option>
+            <option value="d">Deleted</option>
+        </select>
+        <button type="submit">Add Skill</button>
+    </form>
+
+    <hr>
+
+    <!-- List Skills -->
+    <h2>Existing Skills</h2>
+    <ul>
+        {% for skill in skills %}
+        <li>
+            {{ skill.name }} - {{ skill.status.value }}
+            {% if skill.image_file %}
+                <img src="/uploads/skills/{{ skill.image_file }}" width="50">
+            {% endif %}
+            <!-- Update form -->
+            <form action="/admin/skills/save" method="post" enctype="multipart/form-data" style="margin-top:5px;">
+                <input type="hidden" name="id" value="{{ skill.id }}">
+                <input type="text" name="name" value="{{ skill.name }}" required>
+                <input type="file" name="image_file">
+                <select name="status">
+                    <option value="a" {% if skill.status.value=='a' %}selected{% endif %}>Active</option>
+                    <option value="i" {% if skill.status.value=='i' %}selected{% endif %}>Inactive</option>
+                    <option value="d" {% if skill.status.value=='d' %}selected{% endif %}>Deleted</option>
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

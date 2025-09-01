@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Section</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; }
+    .container {
+      max-width: 900px; margin: 30px auto; background: #fff;
+      padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input[type="text"] { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 18px; background: #0275d8; color: #fff;
+             border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #025aa5; }
+    a.back { display: inline-block; margin-bottom: 20px; color: #0275d8; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/admin/dashboard" class="back">← Back to Dashboard</a>
+    <h2>About Section</h2>
+    <form method="post" action="/admin/about">
+      <label for="des1">Description 1</label>
+      <input type="text" id="des1" name="des1" value="{{ about.des1 if about else '' }}">
+
+      <label for="des2">Description 2</label>
+      <input type="text" id="des2" name="des2" value="{{ about.des2 if about else '' }}">
+
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</body>
+</html>

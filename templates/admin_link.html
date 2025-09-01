@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Links</title>
+</head>
+
+<body>
+    <h1>Manage Links</h1>
+
+    <form method="post" action="/admin/links/save">
+        <input type="hidden" name="id" value="{{ link.id if link else '' }}">
+        <label>Key</label>
+        <input type="text" name="key" value="{{ link.key if link else '' }}" required>
+        <label>Value</label>
+        <input type="text" name="value" value="{{ link.value if link else '' }}" required>
+        <label>Status</label>
+        <select name="status">
+            <option value="a" {% if link and link.status.value=='a' %}selected{% endif %}>Active</option>
+            <option value="i" {% if link and link.status.value=='i' %}selected{% endif %}>Inactive</option>
+            <option value="d" {% if link and link.status.value=='d' %}selected{% endif %}>Deleted</option>
+        </select>
+        <button type="submit">{{ 'Update' if link else 'Add' }}</button>
+    </form>
+
+
+    <h2>Existing Links</h2>
+    {% for l in links %}
+    <form method="post" action="/admin/links/save">
+        <input type="hidden" name="id" value="{{ l.id }}">
+        <label>Key</label>
+        <input type="text" name="key" value="{{ l.key }}">
+        <label>Value</label>
+        <input type="text" name="value" value="{{ l.value }}">
+        <label>Status</label>
+        <select name="status">
+            <option value="a" {% if l.status.value=='a' %}selected{% endif %}>Active</option>
+            <option value="i" {% if l.status.value=='i' %}selected{% endif %}>Inactive</option>
+            <option value="d" {% if l.status.value=='d' %}selected{% endif %}>Deleted</option>
+        </select>
+        <button type="submit">Update</button>
+    </form>
+    {% endfor %}
+
+</body>
+
+</html>

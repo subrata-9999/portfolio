@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Hero Section</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { font-weight: bold; }
+        input, textarea, button { margin-top: 5px; margin-bottom: 15px; }
+        #msg { margin-top: 10px; font-weight: bold; color: green; }
+        img { margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Update Hero Section</h1>
+
+    <form id="heroForm" enctype="multipart/form-data">
+        <label>Description:</label><br>
+        <textarea name="description" id="description" rows="4" cols="50"></textarea><br>
+
+        <label>Resume (PDF):</label>
+        <input type="file" name="resume_file" id="resume_file"><br>
+
+        <label>Image:</label>
+        <input type="file" name="image_file" id="image_file"><br>
+
+        <button type="submit">Update Hero Section</button>
+    </form>
+
+    <div>
+        <p>Current Image: <span id="currentImage"></span></p>
+        <p>Current Resume: <span id="currentResume"></span></p>
+    </div>
+
+    <div id="msg"></div>
+
+    <script>
+        const form = document.getElementById('heroForm');
+        const msgDiv = document.getElementById('msg');
+        const currentImage = document.getElementById('currentImage');
+        const currentResume = document.getElementById('currentResume');
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You are not logged in! Redirecting to login page.');
+            window.location.href = 'login.html';
+        }
+
+        // Pre-fill existing data
+        async function fetchHero() {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/admin/hero/get', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Failed to fetch hero data');
+                const data = await res.json();
+                document.getElementById('description').value = data.hero.description || '';
+                if (data.hero.image_file)
+                    currentImage.innerHTML = `<img src="/static/uploads/${data.hero.image_file}" width="150">`;
+                if (data.hero.resume_file)
+                    currentResume.innerHTML = `<a href="/static/uploads/${data.hero.resume_file}" target="_blank">View Resume</a>`;
+            } catch (err) {
+                console.error(err);
+                msgDiv.innerText = 'Error loading hero section';
+                msgDiv.style.color = 'red';
+            }
+        }
+
+        fetchHero();
+
+        // Submit form to update
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            msgDiv.innerText = '';
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch('http://127.0.0.1:8000/admin/hero/update', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    msgDiv.innerText = data.detail || 'Failed to update hero';
+                    msgDiv.style.color = 'red';
+                    return;
+                }
+
+                msgDiv.innerText = data.msg;
+                msgDiv.style.color = 'green';
+
+                // Update current files
+                if (data.hero.image_file)
+                    currentImage.innerHTML = `<img src="/static/uploads/${data.hero.image_file}" width="150">`;
+                if (data.hero.resume_file)
+                    currentResume.innerHTML = `<a href="/static/uploads/${data.hero.resume_file}" target="_blank">View Resume</a>`;
+            } catch (err) {
+                console.error(err);
+                msgDiv.innerText = 'Network error. Try again.';
+                msgDiv.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
