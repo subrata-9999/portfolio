@@ -5,7 +5,7 @@ from app.auth import hash_password  # your hash function
 db = SessionLocal()
 
 # Create admin with hashed password automatically
-new_admin = Admin(username="admin", password=hash_password("123456"))
+new_admin = Admin(username="", password=hash_password(""))
 db.add(new_admin)
 db.commit()
 db.close()
