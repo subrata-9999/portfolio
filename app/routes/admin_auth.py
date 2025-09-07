@@ -85,3 +85,12 @@ def logout():
 @router.get("/me")
 def get_admin_me(current_admin=Depends(get_current_admin)):
     return {"id": current_admin.id, "username": current_admin.username}
+
+
+@router.get("/test-db")
+def test_db(db: Session = Depends(get_db)):
+    try:
+        db.execute("SELECT 1")
+        return {"status": "DB connected"}
+    except Exception as e:
+        return {"error": str(e)}
