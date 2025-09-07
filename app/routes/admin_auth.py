@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Request, Form, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from dotenv import load_dotenv
@@ -90,7 +91,7 @@ def get_admin_me(current_admin=Depends(get_current_admin)):
 @router.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "DB connected"}
     except Exception as e:
         return {"error": str(e)}
