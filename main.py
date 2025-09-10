@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 # Import your routers
 from app.routes import admin_auth, admin_hero, admin_about, admin_skill, admin_project, admin_edu, admin_link
@@ -23,6 +25,16 @@ app.add_middleware(
 # -----------------------------
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+
+
+
+# -----------------------------
+# Setup templates
+# -----------------------------
+templates = Jinja2Templates(directory="templates")
+
+
 # -----------------------------
 # Include Routers
 # -----------------------------
@@ -38,9 +50,9 @@ app.include_router(admin_link.router)
 # -----------------------------
 # Root endpoint (optional)
 # -----------------------------
-@app.get("/")
-def root():
-    return {"message": "Welcome to Portfolio FastAPI"}
+@app.get("/", response_class=HTMLResponse)
+def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 
